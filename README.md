@@ -31,6 +31,15 @@ NetworkX ([GitHub NetworkX](https://github.com/networkx/networkx))
 *Software:*
 Cytoscape 
 
+
+## Code workflow
+```ruby
+kpca_scores = sspa.sspa_kpca(uniport_proteomic, reactome_uniprot)
+```
+
+
+
+
 ## Abstract
 Rapid advances in high-throughput technologies have resulted in the generation of vast amounts of omics data, demanding innovations in analysis to provide the richest interpretation and understanding of the biological system. Pathway analysis (PA) has emerged as an exciting tool to gain novel insights and give meaning to underlying biology from these large omics datasets. PA overcomes the challenge of interpreting large datasets by combining biological knowledge from datasets with various mathematical analysis, computational algorithms, and statistical testing to reduce complexity. Single sample pathway analysis (ssPA), a non-conventional PA technique, derives pathway scores from high-throughput omics data, such as proteomics and metabolomics, and estimates the level of pathway intensity for each sample in a dataset. Correlations of pathway scores between pathways are computed and visualized in a network to improve interpretability. In such networks, pathways are represented as nodes and correlations scores are represented as edges. While there are many strategies already available to analyze high-throughput omics data, the methodology described in this thesis is the first of its kind to integrate multiple omics at the pathway level using a network-based approach. Using this proposed method, we have shown that we can integrate proteomic and metabolomic datasets at the pathway level and identify clusters of highly correlated pathways from the resulting networks. We hypothesize this approach will aid researchers in interpreting and visualizing omics data to identify unique and intriguing patterns. Additionally, this approach could be used as a visualization tool to better understand which pathways are altered in a given disease. 
 
