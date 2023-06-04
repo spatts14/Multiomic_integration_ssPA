@@ -33,12 +33,42 @@ Cytoscape
 
 
 ## Code workflow
+1. Import data
+2. Pre-process data (remove outliers, remove samples with high % missing data, impute missiing data, log2 transform data, standardize data)
+3. Confirm protein/metabolite/transcript name is in the correct format (i.e protein is represented by UniPort ID, metabolites are ChEBI ID)
+4. Perform ssPA analysis - choose correct ssPA function (ssGESA, kPCA, ssClusterPA, etc.) 
 ```ruby
 kpca_scores = sspa.sspa_kpca(uniport_proteomic, reactome_uniprot)
 ```
+To confirm the correct ssPA function for your analysis, please see Wieder C in the reference.
+For further information on ssPA package, see ([ssPA package](https://github.com/cwieder/py-ssPA))
 
+5. Calculate correlation between pathways 
+```ruby
+correlation_t_test, pval = stats.spearmanr(kpca_scores, axis=0, nan_policy='propagate', alternative='two-sided')
+```
+6. Perform multiple testing correction
+```ruby
+pvals_corrected_stats = statsmodels.stats.multitest.multipletests(pval_corr_list["p_val"], alpha=0.05, method='bonferroni', is_sorted=False, returnsorted=False)
+reject = pvals_corrected_stats[0]
+pvals_corrected = pvals_corrected_stats[1]
+alphacBonf = pvals_corrected_stats[2]
 
+# Put p value into a dataframe
+pvals_corrected_df = pd.DataFrame(pvals_corrected, columns = ["p_val_adjust"])
+```
+8. Calculate pathway overlap using with the overlap coefficient (OC) (see notebooks for source code)
+9. Remove edges with correlations with p > 0.005 and OC > 0.5
+10. Generate networks using NetoworkX
+11. Format Networks using Cytoscape
 
+For network integration
+1. Keep pathways found in both molecular networks (i.e remove pathways only present in one molecular network)
+   * Of note, use networks without correlations or OC values removed (i.e skip step 9)
+3. Combine pathway scores from each molecular network (e.g average pathway scores if you would like to weight each network evenly)
+4. Remove edges with correlations with p > 0.05 and OC > 0.5
+5. Generate networks using NetoworkX
+6. Format Networks using Cytoscape
 
 ## Abstract
 Rapid advances in high-throughput technologies have resulted in the generation of vast amounts of omics data, demanding innovations in analysis to provide the richest interpretation and understanding of the biological system. Pathway analysis (PA) has emerged as an exciting tool to gain novel insights and give meaning to underlying biology from these large omics datasets. PA overcomes the challenge of interpreting large datasets by combining biological knowledge from datasets with various mathematical analysis, computational algorithms, and statistical testing to reduce complexity. Single sample pathway analysis (ssPA), a non-conventional PA technique, derives pathway scores from high-throughput omics data, such as proteomics and metabolomics, and estimates the level of pathway intensity for each sample in a dataset. Correlations of pathway scores between pathways are computed and visualized in a network to improve interpretability. In such networks, pathways are represented as nodes and correlations scores are represented as edges. While there are many strategies already available to analyze high-throughput omics data, the methodology described in this thesis is the first of its kind to integrate multiple omics at the pathway level using a network-based approach. Using this proposed method, we have shown that we can integrate proteomic and metabolomic datasets at the pathway level and identify clusters of highly correlated pathways from the resulting networks. We hypothesize this approach will aid researchers in interpreting and visualizing omics data to identify unique and intriguing patterns. Additionally, this approach could be used as a visualization tool to better understand which pathways are altered in a given disease. 
