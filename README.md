@@ -46,9 +46,14 @@ For further information on ssPA package, see ([ssPA package](https://github.com/
 5. Calculate correlation between pathways 
 ```ruby
 correlation_t_test, pval = stats.spearmanr(kpca_scores, axis=0, nan_policy='propagate', alternative='two-sided')
+
+#Put into a dataframe and pval
+correlation_t_test = pd.DataFrame(correlation_t_test, columns = kpca_scores_corr.columns, index=kpca_scores_corr.index)
+pval_corr = pd.DataFrame(pval, columns = kpca_scores_corr.columns, index=kpca_scores_corr.index)
 ```
 6. Perform multiple testing correction
 ```ruby
+pval_corr_list = pval_corr.stack().reset_index()
 pvals_corrected_stats = statsmodels.stats.multitest.multipletests(pval_corr_list["p_val"], alpha=0.05, method='bonferroni', is_sorted=False, returnsorted=False)
 reject = pvals_corrected_stats[0]
 pvals_corrected = pvals_corrected_stats[1]
